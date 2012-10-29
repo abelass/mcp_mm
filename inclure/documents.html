@@ -1,0 +1,82 @@
+[(#REM) Portfolio : album d'images ]
+
+#SET{images,#ARRAY{0,png,1,jpg,2,gif}}
+#SET{video_dist,#ARRAY{0,dist_daily,1,dist_vimeo,2,dist_youtu}}
+#SET{video_local,#ARRAY{0,flv,1,ogg,2,mp4}}
+#SET{videos,#GET{video_dist}|array_merge{#GET{video_local}}}
+#SET{audio,#ARRAY{0,mp3}}
+#SET{non_docs,#GET{videos}|array_merge{#GET{images}}|array_merge{#GET{audio}}}
+
+<B_documents_portfolio>
+<div class="documents documents_portfolio">
+	<h2 class="h2"><:medias:info_portfolio:></h2>
+	<BOUCLE_documents_portfolio(DOCUMENTS) {id_article?}{id_rubrique?} {id_produit ?}{mode ?}{extension IN #GET{images}} {par num titre, date}{vu=non}>[
+	<a href="(#URL_DOCUMENT)"
+		 type="#MIME_TYPE"
+		 rel="documents_portfolio[-a(#ID_ARTICLE)][-r(#ID_RUBRIQUE)]"
+	[ title="(#TITRE|attribut_html|couper{80})"]>[(#FICHIER
+		|image_reduire{0,100}
+		|inserer_attribut{class,spip_logos}
+		|inserer_attribut{alt,[(#TITRE|attribut_html|couper{80})]})]</a>
+	]</BOUCLE_documents_portfolio>
+</div>
+</B_documents_portfolio>
+
+
+[(#REM)
+	Liste des vidéos
+]
+
+
+<B_documents_videos>
+	<div class="liste videos documents_joints">
+	<h2 class="h2">[(#TOTAL_BOUCLE|>{1}|?{<:mcp_mm:videos:>,<:mcp_mm:video:>})]</h2>
+	<ul class="liste-items">
+		<BOUCLE_documents_videos(DOCUMENTS) {extension IN #GET{videos}}{id_article?}{id_produit ?}{id_rubrique?} {vu=non}{par num titre, date}>
+		<li class="item">
+			[(#EXTENSION|in_array{#GET{video_dist}}|?{
+					#MODELE{video_dist},
+					#MODELE{video_local}
+				})]
+
+		</li>
+		</BOUCLE_documents_videos>
+	</ul>
+	</div>
+</B_documents_videos>
+
+[(#REM)
+	Liste des documents audio vidéos
+]
+
+<B_documents_audio>
+	<div class="liste audio documents_joints">
+	<h2 class="h2"><:mcp_mm:audio:></h2>
+	<ul class="liste-items">
+		<BOUCLE_documents_audio(DOCUMENTS) {extension IN #GET{audio}}{id_article?}{id_rubrique?} {vu=non}{par num titre, date}>
+		<li class="item">
+			#MODELE{emb}
+		</li>
+		</BOUCLE_documents_audio>
+	</ul>
+	</div>
+</B_documents_audio>
+
+
+[(#REM)
+	Liste des autres documents joints
+]
+<B_documents_joints>
+	<div class="liste documents documents_joints">
+	<h2 class="h2"><:medias:titre_documents_joints:></h2>
+	<ul class="liste-items">
+		<BOUCLE_documents_joints(DOCUMENTS) {id_article?}{id_rubrique?} {extension !IN  #GET{non_docs}} {vu=non}{par num titre, date}>[
+		<li class="item">[(#LOGO_DOCUMENT|image_reduire{20})]
+			<strong><a href="(#URL_DOCUMENT)" title="<:bouton_telecharger:>" type="#MIME_TYPE">[(#TITRE|sinon{<:info_document:>})]</a></strong>
+			<span class="small">(<span>#TYPE_DOCUMENT[ &ndash; (#TAILLE|taille_en_octets)]</span>)</span>
+			#DESCRIPTIF
+		]</li>
+		</BOUCLE_documents_joints>
+	</ul>
+	</div>
+</B_documents_joints>
