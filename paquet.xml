@@ -17,7 +17,7 @@
 	<necessite nom="mcp1" compatibilite="[0.1.0;]" />
 
 	<necessite nom="videos" compatibilite="[0.9.3;]" />
-	<necessite nom="va" compatibilite="[0.6.2;]" />
+	<necessite nom="va" compatibilite="[0.6.5;]" />
 	<necessite nom="player" compatibilite="[2.1.1;]" />
 
 	
