@@ -1,0 +1,63 @@
+<BOUCLE_tous (DOCUMENTS types_documents) {id_document=#ID} {tout}>[
+(#REM) on trouvera plusieurs variable de hauteur/largeur
+- les balises #HAUTEUR et #LARGEUR
+- #ENV{hauteur} et {largeur} correspondant <emb|hauteur=xx...>
+- #GET{hauteur} et #GET{largeur} correspondent prioritairement a #ENV,
+  puis #LARGEUR/HAUTEUR sauf si il y a un controleur
+]
+#SET{hauteur,#ENV{hauteur,#HAUTEUR}} #SET{largeur,#ENV{largeur,#LARGEUR}}
+[(#REM)
+
+	Si la taille est zero, mettre une valeur par defaut 320x240
+
+][(#GET{hauteur}|plus{#GET{largeur}}|?{'',
+	[(#SET{largeur,320})][(#SET{hauteur,240})]
+})]
+#SET{skin,#ENV{skin,#CONFIG{videojwplayer/skin,''}}}
+#SET{soustitre,''}
+#SET{audiodesc,''}
+#SET{transcript,''}
+<BOUCLE_annexes(DOCUMENTS spip_documents_liens){id_objet=#ID_DOCUMENT}{objet=document}{mode IN soustitre,audiodesc,transcript}{statut==.*}>#SET{#MODE,#URL_DOCUMENT}[(#MODE|=={transcript}|oui)
+[(#SET{transcript_title,[: (#_tous:TITRE|attribut_html|sinon{#TITRE|attribut_html|sinon{#_tous:FICHIER|basename}})] [((#EXTENSION|strtoupper)) [(#TAILLE|taille_en_octets)]]})]
+]</BOUCLE_annexes>
+#SET{soustitre,#ENV{soustitre,#GET{soustitre}}}
+#SET{audiodesc,#ENV{audiodesc,#GET{audiodesc}}}
+#SET{transcript,#ENV{transcript,#GET{transcript}}}
+
+<div class='spip_document_#ID_DOCUMENT spip_documents[ spip_documents_(#ENV{align})]'[
+style='[(#ENV{align}|match{^(left|right)$}|?{' '})float:#ENV{align};] (#ENV{align,center}|=={center}|?{'',' '})[width:(#GET{largeur}|max{120})px]']>
+	<div
+		style='width:#GET{largeur}px;height:#GET{hauteur}px;margin:0 auto;overflow:hidden;'
+		class='video_placeholder'
+	><video
+		src="#URL_DOCUMENT"
+		height="#GET{hauteur}"
+		width="#GET{largeur}"
+		poster="[(#LOGO_DOCUMENT{vignette}|image_reduire{#GET{largeur},#GET{hauteur}}|extraire_attribut{src})]"
+		class="video-jwplayer"
+		data-player="{
+			file:'#URL_DOCUMENT',
+			height:#GET{hauteur},
+			width:#GET{largeur},
+			wmode: 'window',
+			image:'[(#LOGO_DOCUMENT{vignette}|image_reduire{#GET{largeur},#GET{hauteur}}|extraire_attribut{src})]',[
+			title: '(#TITRE|texte_script)',][
+			description: '(#DESCRIPTIF|supprimer_tags|texte_script)',][
+			author: '(#CREDITS|texte_script)',][
+			'captions.file': '(#GET{soustitre})',
+			'captions.back': [(#ENV{captions_back,#CONFIG{videojwplayer/captions_back,oui}}|=={oui}|?{true,false})],
+			'captions.state': [(#ENV{captions_state,#CONFIG{videojwplayer/captions_state,oui}}|=={oui}|?{true,false})],
+			'captions.fontsize': '[(#ENV{captions_fontsize,#CONFIG{videojwplayer/captions_fontsize,14}})]',][
+			'audiodescription.file': '(#GET{audiodesc})',
+			'audiodescription.state': [(#ENV{audiodescription_state,#CONFIG{videojwplayer/audiodescription_state,oui}}|=={oui}|?{true,false})],
+			'audiodescription.ducking': [(#ENV{audiodescription_ducking,#CONFIG{videojwplayer/audiodescription_ducking,non}}|=={oui}|?{true,false})],]
+			[(#GET{skin}|oui)'skin': '[(#CHEMIN{[jwplayer/skins/#GET{skin}/(#GET{skin}).zip]})]',]
+			controlbar: '[(#ENV{controlbar,#CONFIG{videojwplayer/controlbar,bottom}})]',
+			dock: ['(#ENV{dock,#CONFIG{videojwplayer/dock,non}}|=={oui}|?{true,false})'],
+			autostart: [(#ENV{autostart,#CONFIG{videojwplayer/autostart,non}}|=={oui}|?{true,false})]
+		}"
+		>[(#LOGO_DOCUMENT{vignette}|image_reduire{#GET{largeur},#GET{hauteur}})]
+	</video></div>
+</div>
+</BOUCLE_tous>
+#FILTRE{trim}
