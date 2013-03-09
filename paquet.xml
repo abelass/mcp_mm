@@ -1,7 +1,7 @@
 <paquet
 	prefix="mcp_mm"
 	categorie="outil"
-	version="0.1.0"
+	version="0.1.1"
 	etat="dev"
 	compatibilite="[3.0.5;3.0.*]"
 	logo="prive/themes/spip/images/mcp_mm-64.png"

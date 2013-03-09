@@ -8,7 +8,7 @@
 #SET{non_docs,#GET{videos}|array_merge{#GET{images}}|array_merge{#GET{audio}}}
 
 <B_documents_portfolio>
-<div class="documents documents_portfolio">
+<div class="documents documents_portfolio"  id="documents_portfolio">
 	<h2 class="h2"><:medias:info_portfolio:></h2>
 	<BOUCLE_documents_portfolio(DOCUMENTS) {id_article?}{id_rubrique?} {id_produit ?}{mode ?}{extension IN #GET{images}} {par num titre, date}{vu=non}>[
 	<a href="(#URL_DOCUMENT)"
